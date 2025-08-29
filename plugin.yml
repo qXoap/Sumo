@@ -1,0 +1,5 @@
+name: Sumo
+main: xoapp\sumo\Loader
+api: 5.0.0
+version: 1.0.0
+author: Xoapp

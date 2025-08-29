@@ -1,0 +1,20 @@
+{
+  "name": "xoapp/sumo",
+  "description": "Sumo duels MiniGame for PocketMine",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "xoapp",
+      "email": "tbralex7@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "dktapps/pmforms": "dev-master",
+    "paroxity/commando": "dev-master",
+    "muqsit/invmenu": "dev-pm5"
+  },
+  "require": {
+    "pocketmine/pocketmine-mp": "^5.32.0"
+  }
+}
