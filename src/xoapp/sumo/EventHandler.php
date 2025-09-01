@@ -25,23 +25,8 @@ class EventHandler implements Listener
     public function onPlayerQuit(PlayerQuitEvent $event): void
     {
         $player = $event->getPlayer();
-        $session = SessionFactory::get($player->getName());
 
-        if (!is_null($session->getQueue())) {
-            QueueFactory::remove($player->getName());
-            $session->setQueue(null);
-        }
-
-        if (!is_null($game = $session->getCurrentGame())) {
-            $winner = $game->isFirstSession($player->getName()) ? $game->getSecondSession() : $game->getFirstSession();
-            $game->finish($winner, $session);
-        }
-
-        if (!is_null($session->getMakingProcess())) {
-            $session->clearInventory();
-            $session->setMakingProcess(null);
-        }
-
+        SessionFactory::get($player->getName())?->close();
         SessionFactory::remove($player->getName());
     }
 

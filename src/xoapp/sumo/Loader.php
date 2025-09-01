@@ -48,7 +48,7 @@ class Loader extends PluginBase
 
     protected function onDisable(): void
     {
-
+        MapFactory::save();
     }
 
     public static function sleeperHandler(): SleeperHandler

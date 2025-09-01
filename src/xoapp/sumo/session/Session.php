@@ -5,6 +5,7 @@ namespace xoapp\sumo\session;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use xoapp\sumo\factory\QueueFactory;
 use xoapp\sumo\game\Game;
 use xoapp\sumo\session\process\MakeGameProcess;
 use xoapp\sumo\session\queue\QueueProfile;
@@ -85,5 +86,23 @@ class Session
         $packet->soundName = $name;
 
         $player->getNetworkSession()->sendDataPacket($packet);
+    }
+
+    public function close(): void
+    {
+        if (!is_null($this->queue)) {
+            QueueFactory::remove($this->name);
+            $this->queue = null;
+        }
+
+        if (!is_null($game = $this->currentGame)) {
+            $winner = $game->isFirstSession($this->name) ? $game->getSecondSession() : $game->getFirstSession();
+            $game->finish($winner, $this);
+        }
+
+        if (!is_null($this->makeGameProcess)) {
+            $this->clearInventory();
+            $this->makeGameProcess = null;
+        }
     }
 }
