@@ -7,24 +7,32 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use Symfony\Component\Filesystem\Path;
+use xoapp\sumo\factory\GameFactory;
 use xoapp\sumo\game\status\AbstractGameStatus;
 use xoapp\sumo\game\status\RestartingStatus;
 use xoapp\sumo\game\status\StartingStatus;
 use xoapp\sumo\map\MapFactory;
+use xoapp\sumo\scheduler\async\DeleteMapAsync;
 use xoapp\sumo\session\Session;
+use xoapp\sumo\utils\TaskUtils;
 
 class Game
 {
+    private int $firstSessionHits = 0;
+    private int $secondSessionHits = 0;
+
     public function __construct(
         private readonly string $id,
         private readonly string $mapName,
         private readonly Session $firstSession,
         private readonly Session $secondSession,
-        private AbstractGameStatus $gameStatus,
-        private readonly World $world
+        private readonly World $world,
+        private ?AbstractGameStatus $gameStatus = null
     )
     {
         $this->gameStatus = new StartingStatus($this);
@@ -44,6 +52,26 @@ class Game
     public function getSecondSession(): Session
     {
         return $this->secondSession;
+    }
+
+    public function getWorld(): World
+    {
+        return $this->world;
+    }
+
+    public function getFirstSessionHits(): int
+    {
+        return $this->firstSessionHits;
+    }
+
+    public function getSecondSessionHits(): int
+    {
+        return $this->secondSessionHits;
+    }
+
+    public function isFirstSession(string $name): bool
+    {
+        return $this->firstSession->getName() === $name;
     }
 
     public function setGameStatus(AbstractGameStatus $gameStatus): void
@@ -102,8 +130,11 @@ class Game
 
     public function handleDamage(EntityDamageEvent $event): void
     {
-        if (($player = $event->getEntity()) instanceof Player) {
+        $player = $event->getEntity();
+
+        if ($player instanceof Player) {
             $player->setHealth($player->getMaxHealth());
+            $this->isFirstSession($player->getName()) ? $this->firstSessionHits++ : $this->secondSessionHits++;
         }
     }
 
@@ -122,5 +153,17 @@ class Game
         $looser->makeSound('mob.wither.death');
 
         $this->gameStatus = new RestartingStatus($this);
+    }
+
+    public function destroy(): void
+    {
+        Server::getInstance()->getWorldManager()->unloadWorld($this->world);
+
+        TaskUtils::asyncTask(new DeleteMapAsync(
+            "sumo-" . $this->id,
+            Path::join(Server::getInstance()->getDataPath(), "worlds")
+        ));
+
+        GameFactory::remove($this->id);
     }
 }

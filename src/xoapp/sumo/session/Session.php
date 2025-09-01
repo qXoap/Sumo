@@ -6,7 +6,7 @@ use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use xoapp\sumo\game\Game;
-use xoapp\sumo\session\profile\QueueProfile;
+use xoapp\sumo\session\queue\QueueProfile;
 
 class Session
 {

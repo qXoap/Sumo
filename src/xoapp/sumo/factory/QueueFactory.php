@@ -2,7 +2,7 @@
 
 namespace xoapp\sumo\factory;
 
-use xoapp\sumo\session\profile\QueueProfile;
+use xoapp\sumo\session\queue\QueueProfile;
 
 class QueueFactory
 {

@@ -1,8 +1,9 @@
 <?php
 
-namespace xoapp\sumo\session\profile;
+namespace xoapp\sumo\session\queue;
 
 use pocketmine\utils\TextFormat;
+use xoapp\sumo\factory\GameFactory;
 use xoapp\sumo\factory\QueueFactory;
 use xoapp\sumo\factory\SessionFactory;
 use xoapp\sumo\session\Session;
@@ -13,8 +14,8 @@ class QueueProfile
     private int $creationTime = 0;
 
     public function __construct(
-        private readonly string $name,
-        private readonly string $gameMode = "solo"
+        private readonly string  $name,
+        private readonly ?string $map = null
     )
     {
     }
@@ -29,16 +30,16 @@ class QueueProfile
         return SessionFactory::get($this->name);
     }
 
-    public function getGameMode(): string
+    public function getMap(): ?string
     {
-        return $this->gameMode;
+        return $this->map;
     }
 
     public function update(): void
     {
         $this->creationTime++;
         $this->getSession()?->getPlayer()?->sendTip(TextFormat::colorize(
-            "&fMode: &e" . $this->gameMode . "&7|&f Queue Time: &e" . StringUtils::time($this->creationTime)
+            "&f Queue Time: &e" . StringUtils::time($this->creationTime)
         ));
 
         if (($match = $this->search()) === null) {
@@ -53,20 +54,27 @@ class QueueProfile
 
             $session->setQueue(null);
             QueueFactory::remove($this->name);
-
-            // TODO: Send To Sumo Arena
         }
+
+        GameFactory::make($this->getSession(), $match->getSession(), $this->map);
     }
 
     public function search(): ?QueueProfile
     {
-        $profiles = QueueFactory::getAll();
+        $queues = QueueFactory::getAll();
         $match = null;
 
-        foreach ($profiles as $profile) {
-            if ($profile->getGameMode() == $this->gameMode) {
+        foreach ($queues as $profile) {
+            if (is_null($this->map) && is_null($profile->getMap())) {
                 $match = $profile;
+                break;
             }
+
+            if ($this->map !== $profile->getMap()) {
+                continue;
+            }
+
+            $match = $profile;
         }
 
         return $match;
