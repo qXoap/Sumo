@@ -24,6 +24,11 @@ class QueueFactory
         unset(self::$profiles[$name]);
     }
 
+    public static function getQueuesByMap(?string $map = null): array
+    {
+        return array_filter(self::$profiles, fn (QueueProfile $profile) => $profile->getMap() === $map);
+    }
+
     public static function getAll(): array
     {
         return self::$profiles;

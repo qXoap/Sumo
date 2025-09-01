@@ -6,7 +6,7 @@ use pocketmine\Server;
 use pocketmine\world\World;
 use Symfony\Component\Filesystem\Path;
 use xoapp\sumo\game\Game;
-use xoapp\sumo\map\MapFactory;
+use xoapp\sumo\factory\MapFactory;
 use xoapp\sumo\session\Session;
 
 class GameFactory
@@ -42,6 +42,11 @@ class GameFactory
     public static function remove(string $id): void
     {
         unset(self::$games[$id]);
+    }
+
+    public static function getGamesByMap(string $map): array
+    {
+        return array_filter(self::$games, fn (Game $game) => $game->getMapName() === $map);
     }
 
     public static function getAll(): array

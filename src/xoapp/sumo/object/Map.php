@@ -24,7 +24,7 @@ readonly class Map
 
         TaskUtils::asyncTask(new CopyMapAsync(
             $name,
-            Server::getInstance()->getDataPath() . 'maps',
+            Server::getInstance()->getDataPath() . 'worlds',
             $this->name,
             Loader::getInstance()->getDataFolder() . 'maps'
         ));
@@ -77,7 +77,7 @@ readonly class Map
 
         TaskUtils::asyncTask(new CopyMapAsync(
             $this->name,
-            Loader::getInstance()->getDataFolder() . 'worlds',
+            Loader::getInstance()->getDataFolder() . 'maps',
             $newName,
             $newDirectory,
             $sleeperEntry

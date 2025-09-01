@@ -1,11 +1,14 @@
 <?php
 
-namespace xoapp\sumo\map;
+namespace xoapp\sumo\factory;
 
 use pocketmine\world\Position;
+use Symfony\Component\Filesystem\Path;
 use xoapp\sumo\Loader;
 use xoapp\sumo\object\Map;
 use pocketmine\utils\Config;
+use xoapp\sumo\scheduler\async\DeleteMapAsync;
+use xoapp\sumo\utils\TaskUtils;
 
 class MapFactory
 {
@@ -36,6 +39,7 @@ class MapFactory
         }
 
         unset(self::$maps[$name]);
+        TaskUtils::asyncTask(new DeleteMapAsync($name, Path::join(Loader::getInstance()->getDataFolder(), 'maps')));
     }
 
     public static function get(string $name): ?Map

@@ -8,7 +8,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
-use xoapp\sumo\map\MapFactory;
+use xoapp\sumo\factory\MapFactory;
 use xoapp\sumo\session\Session;
 
 class MakeGameProcess
@@ -16,8 +16,8 @@ class MakeGameProcess
     public function __construct(
         private readonly string  $name,
         private readonly Session $session,
-        private ?Position        $firstPosition,
-        private ?Position        $secondPosition
+        private ?Position        $firstPosition = null,
+        private ?Position        $secondPosition = null
     )
     {
         $this->initialize();
@@ -69,6 +69,11 @@ class MakeGameProcess
             1 => $secondPosition,
             8 => $saveProcess
         ]);
+
+        $player->sendMessage(TextFormat::colorize(
+            "&aYou successfully entered in making game process for Map &e" . $this->name
+        ));
+        $this->session->makeSound('random.levelup');
     }
 
     public function handleInteract(PlayerInteractEvent $event): void

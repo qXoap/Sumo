@@ -16,7 +16,7 @@ use xoapp\sumo\factory\GameFactory;
 use xoapp\sumo\game\status\AbstractGameStatus;
 use xoapp\sumo\game\status\RestartingStatus;
 use xoapp\sumo\game\status\StartingStatus;
-use xoapp\sumo\map\MapFactory;
+use xoapp\sumo\factory\MapFactory;
 use xoapp\sumo\scheduler\async\DeleteMapAsync;
 use xoapp\sumo\session\Session;
 use xoapp\sumo\utils\TaskUtils;
@@ -42,6 +42,11 @@ class Game
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getMapName(): string
+    {
+        return $this->mapName;
     }
 
     public function getFirstSession(): Session
