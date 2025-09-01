@@ -2,11 +2,14 @@
 
 namespace xoapp\sumo;
 
+use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\snooze\SleeperHandler;
 use pocketmine\utils\SingletonTrait;
 use Symfony\Component\Filesystem\Path;
+use xoapp\sumo\commands\SumoCommand;
+use xoapp\sumo\factory\MapFactory;
 use xoapp\sumo\factory\SessionFactory;
 use xoapp\sumo\utils\TaskUtils;
 
@@ -33,6 +36,14 @@ class Loader extends PluginBase
             mkdir($storagePath);
         }
 
+        if (!PacketHooker::isRegistered()) {
+            PacketHooker::register($this);
+        }
+
+        $this->getServer()->getPluginManager()->registerEvents(new EventHandler(), $this);
+        $this->getServer()->getCommandMap()->register("sumo", new SumoCommand($this));
+
+        MapFactory::load();
     }
 
     protected function onDisable(): void

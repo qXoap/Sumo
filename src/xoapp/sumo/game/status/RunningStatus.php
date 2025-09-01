@@ -19,7 +19,7 @@ class RunningStatus extends AbstractGameStatus
         }
 
         $winner = $this->getWinnerByHits();
-        $looser = $this->game->isFirstSession($winner->getName()) ?? $this->game->getSecondSession();
+        $looser = $this->game->isFirstSession($winner->getName()) ? $this->game->getSecondSession() : $this->game->getFirstSession();
 
         foreach ($this->game->getWorld()->getPlayers() as $player) {
             $winner->getPlayer()?->setGamemode(GameMode::SPECTATOR());
