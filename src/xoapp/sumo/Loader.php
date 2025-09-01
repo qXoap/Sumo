@@ -9,7 +9,9 @@ use pocketmine\snooze\SleeperHandler;
 use pocketmine\utils\SingletonTrait;
 use Symfony\Component\Filesystem\Path;
 use xoapp\sumo\commands\SumoCommand;
+use xoapp\sumo\factory\GameFactory;
 use xoapp\sumo\factory\MapFactory;
+use xoapp\sumo\factory\QueueFactory;
 use xoapp\sumo\factory\SessionFactory;
 use xoapp\sumo\utils\TaskUtils;
 
@@ -44,6 +46,9 @@ class Loader extends PluginBase
         $this->getServer()->getCommandMap()->register("sumo", new SumoCommand($this));
 
         MapFactory::load();
+
+        TaskUtils::repeatingTask(fn () => GameFactory::update());
+        TaskUtils::repeatingTask(fn () => QueueFactory::update());
     }
 
     protected function onDisable(): void

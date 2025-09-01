@@ -33,4 +33,11 @@ class QueueFactory
     {
         return self::$profiles;
     }
+
+    public static function update(): void
+    {
+        foreach (self::$profiles as $profile) {
+            $profile->update();
+        }
+    }
 }

@@ -54,6 +54,13 @@ class GameFactory
         return self::$games;
     }
 
+    public static function update(): void
+    {
+        foreach (self::$games as $game) {
+            $game->update();
+        }
+    }
+
     private static function randomID(): string
     {
         do {
