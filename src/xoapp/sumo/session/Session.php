@@ -6,6 +6,7 @@ use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use xoapp\sumo\game\Game;
+use xoapp\sumo\session\process\MakeGameProcess;
 use xoapp\sumo\session\queue\QueueProfile;
 
 class Session
@@ -13,7 +14,8 @@ class Session
     public function __construct(
         private readonly string $name,
         private ?QueueProfile $queue = null,
-        private ?Game $currentGame = null
+        private ?Game $currentGame = null,
+        private ?MakeGameProcess $makeGameProcess = null
     )
     {
     }
@@ -38,6 +40,11 @@ class Session
         return $this->currentGame;
     }
 
+    public function getMakingProcess(): ?MakeGameProcess
+    {
+        return $this->makeGameProcess;
+    }
+
     public function setQueue(?QueueProfile $queue): void
     {
         $this->queue = $queue;
@@ -46,6 +53,11 @@ class Session
     public function setCurrentGame(?Game $currentGame): void
     {
         $this->currentGame = $currentGame;
+    }
+
+    public function setMakingProcess(?MakeGameProcess $makeGameProcess): void
+    {
+        $this->makeGameProcess = $makeGameProcess;
     }
 
     public function clearInventory(): void
