@@ -27,6 +27,8 @@ class RestartingStatus extends AbstractGameStatus
             $session->makeSound('block.anvil.break');
         }
 
-        $this->game->destroy();
+        if ($this->time === 0) {
+            $this->game->destroy();
+        }
     }
 }

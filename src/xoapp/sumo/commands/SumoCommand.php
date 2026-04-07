@@ -6,6 +6,9 @@ use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use xoapp\sumo\commands\subCommands\DeleteMapSubCommand;
+use xoapp\sumo\commands\subCommands\ExitGameSubCommand;
+use xoapp\sumo\commands\subCommands\MakeGameSubCommand;
 use xoapp\sumo\forms\FormManager;
 
 class SumoCommand extends BaseCommand
@@ -18,7 +21,15 @@ class SumoCommand extends BaseCommand
 
     protected function prepare(): void
     {
-        // TODO: Implement prepare() method.
+        $subCommands = [
+            new DeleteMapSubCommand($this->base),
+            new ExitGameSubCommand($this->base),
+            new MakeGameSubCommand($this->base)
+        ];
+
+        foreach ($subCommands as $command) {
+            $this->registerSubCommand($command);
+        }
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void

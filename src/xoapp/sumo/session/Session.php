@@ -2,6 +2,7 @@
 
 namespace xoapp\sumo\session;
 
+use Closure;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
@@ -88,21 +89,28 @@ class Session
         $player->getNetworkSession()->sendDataPacket($packet);
     }
 
-    public function close(): void
+    public function close(?Closure $closure = null): void
     {
+        $result = [];
+
         if (!is_null($this->queue)) {
             QueueFactory::remove($this->name);
             $this->queue = null;
+            $result['queue'] = true;
         }
 
         if (!is_null($game = $this->currentGame)) {
             $winner = $game->isFirstSession($this->name) ? $game->getSecondSession() : $game->getFirstSession();
             $game->finish($winner, $this);
+            $result['game'] = true;
         }
 
         if (!is_null($this->makeGameProcess)) {
             $this->clearInventory();
             $this->makeGameProcess = null;
+            $result['process'] = true;
         }
+
+        call_user_func($closure, $result);
     }
 }

@@ -12,7 +12,6 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\player\Player;
-use xoapp\sumo\factory\QueueFactory;
 use xoapp\sumo\factory\SessionFactory;
 
 class EventHandler implements Listener
